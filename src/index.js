@@ -45,7 +45,7 @@ const argv = yargs
     return true;
   }).argv;
 
-  console.log(`load with config: [username: ${argv.username}, password: ${argv.password}, interval: ${argv.interval} second(s)]`);
+  console.log(`Loaded with config: [username: ${argv.username}, password: ${argv.password}, interval: ${argv.interval} second(s)]`);
 
 // 用来ping的主机, 用于测试网络连通性
 const host = "www.baidu.com";
@@ -146,7 +146,7 @@ const getIpAndAcId = async () => {
       }
     } else {
       if (error === "ok") {
-        console.log("你已经登录了, 无需重复登录 〜(￣▽￣〜)");
+        // console.log("你已经登录了, 无需重复登录 〜(￣▽￣〜)");
         return 1;
       }
       throw new Error(
