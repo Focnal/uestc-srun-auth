@@ -196,7 +196,7 @@ const base64 = (function () {
   };
 })();
 
-const crypto = require("crypto");
+import crypto from "crypto";
 
 /**
  * MD5散列函数值计算, 用于对密码进行加密
@@ -213,17 +213,10 @@ function get_sha1(value) {
 }
 
 /**
- * 写啥都行
+ * 写啥都行, 这个部分用于后端jquery回调函数名字
  */
-function say_something(){
-  return "_UESTC_is_a_pile_of_shit_"
+function say_something() {
+  return "_UESTC_is_a_pile_of_shit_";
 }
 
-module.exports = {
-  encode,
-  base64,
-  get_md5,
-  get_sha1,
-  say_something
-};
-
+export { encode, base64, get_md5, get_sha1, say_something };

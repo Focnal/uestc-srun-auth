@@ -1,26 +1,28 @@
-const GATEWAY_URL = "http://192.168.9.8";
+import axios from 'axios'
+import dayjs from 'dayjs';
+import { exec } from 'child_process';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers'
 
-const axios = require("axios");
-const dayjs = require("dayjs");
-const { exec } = require("child_process");
-const yargs = require("yargs");
-const {
+import {
   encode,
   base64,
   get_sha1,
   get_md5,
   say_something,
-} = require("./util.cjs");
+} from "./util.js"
 
+const GATEWAY_URL = "http://192.168.9.8";
+
+const yarg = yargs(hideBin(process.argv))
 
 // 命令行参数设置
-const argv = yargs
-  // 登录请求过快可能会导致"speed_limit_error", 给联网设备或者路由器更换MAC地址就能恢复正常
+const argv = yarg
   .option("interval", {
     alias: "i",
-    description: "设置登录间隔时间（单位：秒）",
+    description: "设置登录间隔时间（单位：秒）", 
     type: "number",
-    default: 5, // 默认间隔5秒钟
+    default: 5, // 默认间隔5秒钟, 登录请求过快可能会导致"speed_limit_error", 给联网设备或者路由器更换MAC地址就能恢复正常
   })
   .option("username", {
     alias: "u",
