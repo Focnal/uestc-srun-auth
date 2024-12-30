@@ -219,4 +219,4 @@ function say_something() {
   return "_UESTC_is_a_pile_of_shit_";
 }
 
-export { encode, base64, get_md5, get_sha1, say_something };
+export { base64, encode, get_md5, get_sha1, say_something };

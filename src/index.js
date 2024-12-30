@@ -1,26 +1,20 @@
-import axios from 'axios'
-import dayjs from 'dayjs';
-import { exec } from 'child_process';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers'
+import axios from "axios";
+import dayjs from "dayjs";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-import {
-  encode,
-  base64,
-  get_sha1,
-  get_md5,
-  say_something,
-} from "./util.js"
+import isOnline from "is-online";
+import { base64, encode, get_md5, get_sha1, say_something } from "./util.js";
 
 const GATEWAY_URL = "http://192.168.9.8";
 
-const yarg = yargs(hideBin(process.argv))
+const yarg = yargs(hideBin(process.argv));
 
 // 命令行参数设置
 const argv = yarg
   .option("interval", {
     alias: "i",
-    description: "设置登录间隔时间（单位：秒）", 
+    description: "设置登录间隔时间（单位：秒）",
     type: "number",
     default: 5, // 默认间隔5秒钟, 登录请求过快可能会导致"speed_limit_error", 给联网设备或者路由器更换MAC地址就能恢复正常
   })
@@ -47,7 +41,9 @@ const argv = yarg
     return true;
   }).argv;
 
-  console.log(`Loaded with config: [username: ${argv.username}, password: ${argv.password}, interval: ${argv.interval} second(s)]`);
+console.log(
+  `Loaded with config: [username: ${argv.username}, password: ${argv.password}, interval: ${argv.interval} second(s)]`
+);
 
 // 用来ping的主机, 用于测试网络连通性
 const host = "www.baidu.com";
@@ -116,7 +112,7 @@ const request = async (url, params = {}, method = "GET") => {
   }
 };
 
-const check_net_connection = async () => {
+const test_online = async () => {
   // 请求太快可能会导致"speed_limit_error"
   // try {
   //   const json_data = await request("/cgi-bin/rad_user_info");
@@ -124,15 +120,7 @@ const check_net_connection = async () => {
   //     return true;
   //   } else return false;
   // } catch (error) {}
-  return new Promise((resolve, reject) => {
-    exec(`ping -w 4000 -n 1 ${host}`, (error, stdout, stderr) => {
-      if (error) {
-        reject("网络连接异常");
-      } else {
-        resolve();
-      }
-    });
-  });
+  return await isOnline();
 };
 
 // 获取当前ip和ac_id
@@ -147,8 +135,8 @@ const getIpAndAcId = async () => {
         throw new Error("获取登录IP失败");
       }
     } else {
+      // 校园网已经登录，可能为其他原因引发的网络连接故障
       if (error === "ok") {
-        // console.log("你已经登录了, 无需重复登录 〜(￣▽￣〜)");
         return 1;
       }
       throw new Error(
@@ -171,11 +159,9 @@ const getIpAndAcId = async () => {
 
 // 登录过程
 const login = async () => {
-  console.log("正在尝试登录校园网...");
-
   try {
     const retVal = await getIpAndAcId();
-    if (retVal) {
+    if (retVal === 1) {
       return;
     }
 
@@ -249,15 +235,13 @@ const login = async () => {
   }
 };
 
-
-
 const testAndLogin = async () => {
-  try {
-    const result = await check_net_connection();
-  } catch (err) {
-    console.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${err}`);
+  const result = await test_online();
+  if (!result) {
+    console.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] 网络连接故障`);
     await login();
   }
-}
-testAndLogin()
+};
+
+testAndLogin();
 setInterval(testAndLogin, profile.interval);
