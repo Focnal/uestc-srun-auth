@@ -149,7 +149,7 @@ const getIpAndAcId = async () => {
     );
     profile.acId = params.get("ac_id");
 
-    console.log(`ac_id: ${profile.acId}`);
+    // console.log(`ac_id: ${profile.acId}`);
     return null;
   } catch (error) {
     console.error("获取 IP 或 ac_id 失败:", error);
@@ -172,11 +172,11 @@ const login = async () => {
     });
     profile.token = challengeData.challenge;
 
-    console.log(`token: ${profile.token}`);
+    // console.log(`token: ${profile.token}`);
 
     // 获取密码md5
     profile.md5 = get_md5(profile.password, profile.token);
-    console.log(`md5: ${profile.md5}`);
+    // console.log(`md5: ${profile.md5}`);
 
     // 获取 info
     profile.info =
@@ -193,7 +193,7 @@ const login = async () => {
           profile.token
         )
       );
-    console.log(`info: ${profile.info}`);
+    // console.log(`info: ${profile.info}`);
 
     // 计算 chksum
     const str = [
@@ -225,7 +225,7 @@ const login = async () => {
     });
 
     if (loginResp.error === "ok") {
-      console.log("登录成功! q(≧▽≦q)");
+      console.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] 登录成功! q(≧▽≦q)`);
     } else {
       console.log("登录失败, 返回信息如下:");
       console.log(loginResp);
